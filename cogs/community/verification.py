@@ -29,6 +29,18 @@ def get_color(value: str | None, fallback: discord.Color) -> discord.Color:
         return fallback
 
 
+def normalize_image_url(image_url: str) -> str:
+    image_url = image_url.strip()
+    if "github.com/" not in image_url or "/blob/" not in image_url:
+        return image_url
+
+    clean_url = image_url.split("?", 1)[0]
+    return clean_url.replace("https://github.com/", "https://raw.githubusercontent.com/").replace(
+        "/blob/",
+        "/",
+    )
+
+
 def create_verification_embed(config: dict[str, Any]) -> discord.Embed:
     embed_config = config.get("embed", {})
     embed = discord.Embed(
@@ -39,6 +51,10 @@ def create_verification_embed(config: dict[str, Any]) -> discord.Embed:
         ),
         color=get_color(embed_config.get("color"), discord.Color.green()),
     )
+
+    image_url = str(embed_config.get("image_url", "")).strip()
+    if image_url:
+        embed.set_image(url=normalize_image_url(image_url))
 
     footer = str(embed_config.get("footer", "")).strip()
     if footer:

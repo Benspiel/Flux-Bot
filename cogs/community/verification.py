@@ -68,6 +68,16 @@ def create_verification_embed(config: dict[str, Any]) -> discord.Embed:
     if image_url:
         embed.set_image(url=normalize_image_url(image_url))
 
+    thumbnail_url = str(embed_config.get("thumbnail_url", "")).strip()
+    if thumbnail_url:
+        embed.set_thumbnail(url=normalize_image_url(thumbnail_url))
+
+    for field in embed_config.get("fields", []):
+        name = str(field.get("name", "")).strip()
+        value = str(field.get("value", "")).strip()
+        if name and value:
+            embed.add_field(name=name, value=value, inline=bool(field.get("inline", False)))
+
     footer = str(embed_config.get("footer", "")).strip()
     if footer:
         embed.set_footer(text=footer)

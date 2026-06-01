@@ -52,6 +52,18 @@ def create_verification_embed(config: dict[str, Any]) -> discord.Embed:
         color=get_color(embed_config.get("color"), discord.Color.green()),
     )
 
+    thumbnail_url = str(embed_config.get("thumbnail_url", "")).strip()
+    if thumbnail_url:
+        embed.set_thumbnail(url=normalize_image_url(thumbnail_url))
+
+    for field in embed_config.get("fields", []):
+        name = str(field.get("name", "")).strip()
+        value = str(field.get("value", "")).strip()
+        if not name or not value:
+            continue
+
+        embed.add_field(name=name, value=value, inline=bool(field.get("inline", False)))
+
     image_url = str(embed_config.get("image_url", "")).strip()
     if image_url:
         embed.set_image(url=normalize_image_url(image_url))

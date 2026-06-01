@@ -1,0 +1,71 @@
+{
+  "bot": {
+    "sync_commands_on_start": true,
+    "command_prefix": "!"
+  },
+  "ticket_system": {
+    "enabled": true,
+    "panel": {
+      "channel_id": 0,
+      "clear_channel_on_start": true,
+      "title": "Support Tickets",
+      "description": "Wähle unten eine Kategorie aus, um ein neues Ticket zu öffnen.",
+      "placeholder": "Kategorie auswählen...",
+      "color": "#5865F2",
+      "image_url": ""
+    },
+    "channels": {
+      "category_id": 0,
+      "ticket_prefix": "ticket"
+    },
+    "permissions": {
+      "support_role_ids": [
+        0
+      ]
+    },
+    "banner": {
+      "image_url": "https://github.com/Benspiel/Flux-Bot/blob/d67fcb7bfada60446f7456440c7c42f59dfc8cb8/bilder/Support.png?raw=true",
+      "local_file": ""
+    },
+    "ticket_embed": {
+      "title": "Support Ticket",
+      "description": "Hallo {user_mention}! Ein Teammitglied hilft dir gleich weiter.\nBitte beschreibe dein Anliegen in der Zwischenzeit so genau wie möglich.",
+      "color": "#2ECC71",
+      "footer": "Ticket ID: {ticket_id}"
+    },
+    "messages": {
+      "guild_only": "Tickets können nur auf einem Server erstellt werden.",
+      "already_open": "Du hast bereits ein offenes Ticket: {channel_mention}",
+      "created": "Dein Ticket wurde erstellt: {channel_mention}",
+      "ticket_created_message": "{user_mention} hat ein neues Ticket erstellt. {support_mentions}",
+      "missing_channel_permission": "Ich habe keine Berechtigung, Ticket-Channels zu erstellen.",
+      "no_reason": "Nicht angegeben",
+      "not_a_ticket_channel": "Dieses Ticket kann hier nicht geschlossen werden.",
+      "close_denied": "Du darfst dieses Ticket nicht schließen.",
+      "close_question": "Möchtest du dieses Ticket wirklich schließen?",
+      "close_confirm_owner_only": "Nur die Person, die das Schließen gestartet hat, kann hier bestätigen.",
+      "closing": "Ticket wird geschlossen...",
+      "close_cancelled": "Schließen abgebrochen."
+    },
+    "categories": [
+      {
+        "label": "Support",
+        "description": "Allgemeine Hilfe und Fragen",
+        "emoji": "🎫",
+        "question": "Wobei brauchst du Hilfe?"
+      },
+      {
+        "label": "Bewerbung",
+        "description": "Bewerbung für das Team",
+        "emoji": "📝",
+        "question": "Für welchen Bereich möchtest du dich bewerben?"
+      },
+      {
+        "label": "Bug",
+        "description": "Fehler oder Probleme melden",
+        "emoji": "🐛",
+        "question": "Beschreibe den Fehler so genau wie möglich."
+      }
+    ]
+  }
+}

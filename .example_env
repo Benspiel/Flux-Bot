@@ -1,1 +1,3 @@
 DISCORD_TOKEN=dein_bot_token
+TWITCH_CLIENT_ID=deine_twitch_client_id
+TWITCH_CLIENT_SECRET=dein_twitch_client_secret

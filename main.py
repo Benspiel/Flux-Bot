@@ -30,6 +30,8 @@ class FluxBot(commands.Bot):
         intents = discord.Intents.default()
         intents.guilds = True
         intents.members = True
+        intents.reactions = True
+        intents.message_content = True
 
         super().__init__(
             command_prefix=commands.when_mentioned_or(bot_config.get("command_prefix", "!")),
@@ -38,11 +40,12 @@ class FluxBot(commands.Bot):
         )
 
     async def setup_hook(self) -> None:
-        for cog_file in sorted(COGS_DIR.glob("*.py")):
+        for cog_file in sorted(COGS_DIR.rglob("*.py")):
             if cog_file.name.startswith("_"):
                 continue
 
-            extension = f"cogs.{cog_file.stem}"
+            cog_path = cog_file.relative_to(COGS_DIR).with_suffix("")
+            extension = ".".join(("cogs", *cog_path.parts))
             await self.load_extension(extension)
             logging.info("Loaded extension %s", extension)
 

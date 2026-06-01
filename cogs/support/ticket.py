@@ -19,7 +19,8 @@ def load_config() -> dict[str, Any]:
 
 
 def ticket_config() -> dict[str, Any]:
-    return load_config().get("ticket_system", {})
+    config = load_config()
+    return config.get("ticket_system", config)
 
 
 def get_color(value: str | None, fallback: discord.Color) -> discord.Color:
@@ -33,7 +34,20 @@ def get_color(value: str | None, fallback: discord.Color) -> discord.Color:
 
 
 def get_ticket_options() -> list[dict[str, Any]]:
-    return ticket_config().get("categories", [])
+    config = ticket_config()
+    return config.get("ticket_options", config.get("categories", []))
+
+
+def normalize_image_url(image_url: str) -> str:
+    image_url = image_url.strip()
+    if "github.com/" not in image_url or "/blob/" not in image_url:
+        return image_url
+
+    clean_url = image_url.split("?", 1)[0]
+    return clean_url.replace("https://github.com/", "https://raw.githubusercontent.com/").replace(
+        "/blob/",
+        "/",
+    )
 
 
 def get_banner_file() -> discord.File | None:
@@ -50,10 +64,15 @@ def get_banner_file() -> discord.File | None:
 
 
 def get_banner_image_url() -> str | None:
-    banner = ticket_config().get("banner", {})
+    config = ticket_config()
+    image_url = str(config.get("image_url", "")).strip()
+    if image_url:
+        return normalize_image_url(image_url)
+
+    banner = config.get("banner", {})
     image_url = str(banner.get("image_url", "")).strip()
     if image_url:
-        return image_url
+        return normalize_image_url(image_url)
 
     file_path = str(banner.get("local_file", "")).strip()
     if file_path and Path(file_path).exists():
@@ -85,7 +104,7 @@ def shorten_text(text: str, max_length: int) -> str:
 
 
 def find_option_config(config: dict[str, Any], label: str) -> dict[str, Any]:
-    for option in config.get("categories", []):
+    for option in config.get("ticket_options", config.get("categories", [])):
         if option.get("label") == label:
             return option
     return {}
@@ -147,17 +166,17 @@ def create_panel_embed() -> discord.Embed:
         color=get_color(panel.get("color"), discord.Color.blurple()),
     )
 
-    image_url = str(panel.get("image_url", "")).strip()
-    if image_url:
-        embed.set_image(url=image_url)
-
     return embed
 
 
 def get_support_role_ids() -> set[int]:
+    config = ticket_config()
     return {
         int(role_id)
-        for role_id in ticket_config().get("permissions", {}).get("support_role_ids", [])
+        for role_id in config.get(
+            "support_role_ids",
+            config.get("permissions", {}).get("support_role_ids", []),
+        )
         if str(role_id).isdigit()
     }
 
@@ -228,7 +247,7 @@ async def create_ticket(
         )
         return
 
-    category_id = int(channel_config.get("category_id") or 0)
+    category_id = int(config.get("ticket_category_id", channel_config.get("category_id") or 0))
     category = guild.get_channel(category_id) if category_id else None
     ticket_id = randint(1000, 9999)
 
@@ -261,7 +280,7 @@ async def create_ticket(
             )
 
     channel_name = create_channel_name(
-        channel_config.get("ticket_prefix", "ticket"),
+        config.get("ticket_prefix", channel_config.get("ticket_prefix", "ticket")),
         selected,
         user,
     )
@@ -338,7 +357,11 @@ class TicketDropdown(discord.ui.Select):
             )
             for option in options_config
         ]
-        placeholder = ticket_config().get("panel", {}).get("placeholder", "Kategorie auswählen...")
+        config = ticket_config()
+        placeholder = config.get(
+            "placeholder",
+            config.get("panel", {}).get("placeholder", "Kategorie auswählen..."),
+        )
         super().__init__(
             custom_id=TICKET_SELECT_ID,
             placeholder=placeholder,
@@ -515,7 +538,7 @@ class Tickets(commands.Cog):
             return
 
         panel = config.get("panel", {})
-        channel_id = int(panel.get("channel_id") or 0)
+        channel_id = int(config.get("ticket_channel_id", panel.get("channel_id") or 0))
         channel = self.bot.get_channel(channel_id) if channel_id else None
 
         if channel is None and channel_id:
@@ -532,7 +555,7 @@ class Tickets(commands.Cog):
         try:
             if panel.get("clear_channel_on_start", True):
                 await channel.purge(limit=None, reason="Ticket-Panel beim Start zurückgesetzt")
-            await send_ticket_panel(channel, config.get("categories", []))
+            await send_ticket_panel(channel, get_ticket_options())
             self.panel_sent = True
             print(f"Ticket-Panel in #{channel.name} gesendet.")
         except discord.Forbidden:

@@ -6,5 +6,8 @@ __pycache__/
 # Umgebungsvariablen
 .env
 
+# Runtime-State
+data/social_notifications_state.json
+
 # VS Code
 .vscode/

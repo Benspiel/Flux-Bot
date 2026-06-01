@@ -57,6 +57,7 @@ class FluxBot(commands.Bot):
         if self.user is None:
             return
 
+        await self.change_presence(activity=discord.CustomActivity(name="🟢 | Online"))
         logging.info("Logged in as %s (%s)", self.user, self.user.id)
 
 

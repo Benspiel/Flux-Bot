@@ -153,22 +153,6 @@ def create_ticket_embed(
     return embed
 
 
-def create_panel_embed() -> discord.Embed:
-    config = ticket_config()
-    panel = config.get("panel", {})
-
-    embed = discord.Embed(
-        title=panel.get("title", "Support Tickets"),
-        description=panel.get(
-            "description",
-            "Wähle unten eine Kategorie aus, um ein neues Ticket zu öffnen.",
-        ),
-        color=get_color(panel.get("color"), discord.Color.blurple()),
-    )
-
-    return embed
-
-
 def get_support_role_ids() -> set[int]:
     config = ticket_config()
     return {
@@ -408,6 +392,50 @@ class TicketView(discord.ui.View):
         self.add_item(TicketDropdown(options_config))
 
 
+class TicketPanelView(discord.ui.LayoutView):
+    def __init__(self, options_config: list[dict[str, Any]]):
+        super().__init__(timeout=None)
+        config = ticket_config()
+        panel = config.get("panel", {})
+        title = str(panel.get("title", "# `🎫` Support Tickets")).strip()
+        description = str(
+            panel.get(
+                "description",
+                "`📌` Wähle unten eine Kategorie aus, um ein neues Ticket zu öffnen.",
+            ),
+        ).strip()
+
+        components = []
+
+        if title:
+            components.append(discord.ui.TextDisplay(title))
+
+        if title and description:
+            components.append(discord.ui.Separator())
+
+        if description:
+            components.append(discord.ui.TextDisplay(description))
+
+        image_url = get_banner_image_url()
+        if image_url:
+            components.append(discord.ui.Separator())
+            components.append(
+                discord.ui.MediaGallery(
+                    discord.MediaGalleryItem(image_url),
+                ),
+            )
+
+        components.append(discord.ui.Separator())
+        components.append(discord.ui.ActionRow(TicketDropdown(options_config)))
+
+        self.add_item(
+            discord.ui.Container(
+                *components,
+                accent_colour=get_color(panel.get("color"), discord.Color.blurple()),
+            ),
+        )
+
+
 class TicketCloseConfirmView(discord.ui.View):
     def __init__(self, requester_id: int):
         super().__init__(timeout=60)
@@ -513,7 +541,7 @@ class TicketCloseView(discord.ui.View):
 
 
 async def send_ticket_panel(channel: discord.TextChannel, options_config: list[dict[str, Any]]):
-    await channel.send(embed=create_panel_embed(), view=TicketView(options_config))
+    await channel.send(view=TicketPanelView(options_config))
 
 
 class Tickets(commands.Cog):
@@ -525,7 +553,7 @@ class Tickets(commands.Cog):
 
         options = get_ticket_options()
         if options:
-            self.bot.add_view(TicketView(options))
+            self.bot.add_view(TicketPanelView(options))
         self.bot.add_view(TicketCloseView())
 
     @commands.Cog.listener()

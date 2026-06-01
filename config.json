@@ -1,7 +1,7 @@
 {
   "ticket_channel_id": 1510656168735805622,
   "ticket_category_id": 1510627232304074772,
-  "image_url": "https://raw.githubusercontent.com/Benspiel/Flux-Bot/d67fcb7bfada60446f7456440c7c42f59dfc8cb8/bilder/Support.png",
+  "image_url": "https://github.com/Benspiel/Flux-Bot/blob/4a88d9b1b8a63bbcdcebcb7126e31ac27ec470d8/bilder/support_banner.png",
   "support_role_ids": [
     1274716660036800614
   ],
@@ -25,6 +25,13 @@
       "question": ""
     }
   ],
+  "announcements": {
+    "enabled": true,
+    "channel_id": 1511050289031938189,
+    "auto_convert_messages": true,
+    "color": "#5865f2",
+    "image_url": "https://github.com/Benspiel/Flux-Bot/blob/4a88d9b1b8a63bbcdcebcb7126e31ac27ec470d8/bilder/support_banner.png"
+  },
   "verification": {
     "enabled": true,
     "channel_id": 1428752967439487059,

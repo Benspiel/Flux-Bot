@@ -17,7 +17,7 @@ def load_config() -> dict[str, Any]:
 
 def announcement_config() -> dict[str, Any]:
     config = load_config()
-    return config.get("announcements", {})
+    return config.get("features", {}).get("announcements", config.get("announcements", {}))
 
 
 def get_color(value: str | None, fallback: discord.Color) -> discord.Color:

@@ -20,7 +20,8 @@ def load_config() -> dict[str, Any]:
 
 def ticket_config() -> dict[str, Any]:
     config = load_config()
-    return config.get("ticket_system", config)
+    features = config.get("features", {})
+    return features.get("tickets", features.get("ticket_system", config.get("ticket_system", config)))
 
 
 def get_color(value: str | None, fallback: discord.Color) -> discord.Color:
@@ -50,8 +51,19 @@ def normalize_image_url(image_url: str) -> str:
     )
 
 
-def get_banner_file() -> discord.File | None:
-    banner = ticket_config().get("banner", {})
+def get_banner_config(*keys: str) -> dict[str, Any]:
+    config = ticket_config()
+    for key in keys:
+        banner = config.get(key, {})
+        if isinstance(banner, dict) and banner:
+            return banner
+
+    banner = config.get("banner", {})
+    return banner if isinstance(banner, dict) else {}
+
+
+def get_banner_file(*keys: str) -> discord.File | None:
+    banner = get_banner_config(*keys)
     file_path = str(banner.get("local_file", "")).strip()
     if not file_path:
         return None
@@ -63,13 +75,22 @@ def get_banner_file() -> discord.File | None:
     return discord.File(path, filename=path.name)
 
 
-def get_banner_image_url() -> str | None:
+def get_banner_image_url(*keys: str) -> str | None:
     config = ticket_config()
-    image_url = str(config.get("image_url", "")).strip()
-    if image_url:
-        return normalize_image_url(image_url)
+    for key in keys:
+        banner = config.get(key, {})
+        if not isinstance(banner, dict):
+            continue
 
-    banner = config.get("banner", {})
+        image_url = str(banner.get("image_url", "")).strip()
+        if image_url:
+            return normalize_image_url(image_url)
+
+        file_path = str(banner.get("local_file", "")).strip()
+        if file_path and Path(file_path).exists():
+            return f"attachment://{Path(file_path).name}"
+
+    banner = get_banner_config()
     image_url = str(banner.get("image_url", "")).strip()
     if image_url:
         return normalize_image_url(image_url)
@@ -77,6 +98,10 @@ def get_banner_image_url() -> str | None:
     file_path = str(banner.get("local_file", "")).strip()
     if file_path and Path(file_path).exists():
         return f"attachment://{Path(file_path).name}"
+
+    image_url = str(config.get("image_url", "")).strip()
+    if image_url:
+        return normalize_image_url(image_url)
 
     return None
 
@@ -142,7 +167,7 @@ def create_ticket_embed(
     embed.add_field(name="Ersteller", value=user.mention, inline=True)
     embed.add_field(name="Grund", value=shorten_text(reason_text, 1024), inline=False)
 
-    image_url = get_banner_image_url()
+    image_url = get_banner_image_url("ticket_banner")
     if image_url:
         embed.set_image(url=image_url)
 
@@ -299,7 +324,7 @@ async def create_ticket(
     )
 
     embed = create_ticket_embed(user, selected, ticket_id, reason)
-    file = get_banner_file()
+    file = get_banner_file("ticket_banner")
     if file:
         await ticket_channel.send(embed=embed, file=file, view=TicketCloseView())
     else:
@@ -398,12 +423,7 @@ class TicketPanelView(discord.ui.LayoutView):
         config = ticket_config()
         panel = config.get("panel", {})
         title = str(panel.get("title", "# `🎫` Support Tickets")).strip()
-        description = str(
-            panel.get(
-                "description",
-                "`📌` Wähle unten eine Kategorie aus, um ein neues Ticket zu öffnen.",
-            ),
-        ).strip()
+        description = str(panel.get("description", "")).strip()
 
         components = []
 
@@ -416,7 +436,7 @@ class TicketPanelView(discord.ui.LayoutView):
         if description:
             components.append(discord.ui.TextDisplay(description))
 
-        image_url = get_banner_image_url()
+        image_url = get_banner_image_url("ticket_creator", "ticket_creater", "panel_banner")
         if image_url:
             components.append(discord.ui.Separator())
             components.append(
@@ -431,7 +451,6 @@ class TicketPanelView(discord.ui.LayoutView):
         self.add_item(
             discord.ui.Container(
                 *components,
-                accent_colour=get_color(panel.get("color"), discord.Color.blurple()),
             ),
         )
 
@@ -566,7 +585,13 @@ class Tickets(commands.Cog):
             return
 
         panel = config.get("panel", {})
-        channel_id = int(config.get("ticket_channel_id", panel.get("channel_id") or 0))
+        channel_config = config.get("channels", {})
+        channel_id = int(
+            config.get(
+                "ticket_channel_id",
+                panel.get("channel_id") or channel_config.get("panel_channel_id") or 0,
+            )
+        )
         channel = self.bot.get_channel(channel_id) if channel_id else None
 
         if channel is None and channel_id:

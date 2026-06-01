@@ -16,7 +16,7 @@ def load_config() -> dict[str, Any]:
 
 def verification_config() -> dict[str, Any]:
     config = load_config()
-    return config.get("verification", {})
+    return config.get("features", {}).get("verification", config.get("verification", {}))
 
 
 def get_color(value: str | None, fallback: discord.Color) -> discord.Color:

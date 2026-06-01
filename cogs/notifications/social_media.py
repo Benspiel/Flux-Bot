@@ -34,7 +34,18 @@ def save_json(path: Path, data: dict[str, Any]) -> None:
 
 def social_config() -> dict[str, Any]:
     config = load_json(CONFIG_PATH, {})
-    return config.get("social_notifications", {})
+    social = config.get("features", {}).get(
+        "social_notifications",
+        config.get("social_notifications", {}),
+    )
+    platforms = social.get("platforms", {})
+    if isinstance(platforms, dict):
+        social = {
+            **social,
+            "youtube": platforms.get("youtube", social.get("youtube", {})),
+            "twitch": platforms.get("twitch", social.get("twitch", {})),
+        }
+    return social
 
 
 def get_color(value: str | None, fallback: discord.Color) -> discord.Color:

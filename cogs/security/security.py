@@ -22,7 +22,12 @@ def load_config() -> dict[str, Any]:
 
 
 def security_config() -> dict[str, Any]:
-    return load_config().get("security", {})
+    config = load_config()
+    security = config.get("features", {}).get("security", config.get("security", {}))
+    rules = security.get("rules", {})
+    if isinstance(rules, dict):
+        security = {**security, **rules}
+    return security
 
 
 def get_color(value: str | None, fallback: discord.Color) -> discord.Color:

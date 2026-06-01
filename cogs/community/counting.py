@@ -16,7 +16,7 @@ def load_config() -> dict[str, Any]:
 
 def counting_config() -> dict[str, Any]:
     config = load_config()
-    return config.get("counting", {})
+    return config.get("features", {}).get("counting", config.get("counting", {}))
 
 
 class CountGame(commands.Cog):

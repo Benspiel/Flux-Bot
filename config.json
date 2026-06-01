@@ -1,212 +1,254 @@
 {
-  "ticket_channel_id": 1510656168735805622,
-  "ticket_category_id": 1510627232304074772,
-  "image_url": "https://github.com/Benspiel/Flux-Bot/blob/4a88d9b1b8a63bbcdcebcb7126e31ac27ec470d8/bilder/support_banner.png",
-  "support_role_ids": [
-    1274716660036800614
-  ],
-  "ticket_options": [
-    {
-      "label": "Bewerbung",
-      "description": "Bewirb dich für ein Team oder einen Rang",
-      "emoji": "📋",
-      "question": ""
-    },
-    {
-      "label": "Fehler",
-      "description": "Melde einen Fehler oder ein Problem",
-      "emoji": "🐛",
-      "question": "Was denn"
-    },
-    {
-      "label": "Allgemein",
-      "description": "Allgemeine Support-Anfrage",
-      "emoji": "💬",
-      "question": ""
-    }
-  ],
-  "announcements": {
-    "enabled": true,
-    "channel_id": 1511050289031938189,
-    "auto_convert_messages": true,
-    "color": "#5865f2",
-    "image_url": "https://github.com/Benspiel/Flux-Bot/blob/4a88d9b1b8a63bbcdcebcb7126e31ac27ec470d8/bilder/support_banner.png"
+  "bot": {
+    "command_prefix": "!",
+    "sync_commands_on_start": true
   },
-  "verification": {
-    "enabled": true,
-    "channel_id": 1428752967439487059,
-    "role_id": 1510988283654701136,
-    "emoji": "✅",
-    "clear_channel_on_start": true,
-    "embed": {
-      "title": "# `✅` Server-Verifizierung",
-      "description": "`📌` Willkommen auf dem Discord-Server.\n> Bitte lies die Serverregeln aufmerksam durch.\n> Klicke unten auf den Button, um dich zu verifizieren und Zugriff auf die freigeschalteten Bereiche zu erhalten.\n> Mit der Verifizierung bestätigst du, dass du die Regeln gelesen hast und akzeptierst.",
-      "color": "#2b2d31",
-      "thumbnail_url": "",
-      "fields": [
+  "features": {
+    "tickets": {
+      "enabled": true,
+      "channels": {
+        "panel_channel_id": 1510656168735805622,
+        "category_id": 1510627232304074772,
+        "ticket_prefix": "ticket"
+      },
+      "permissions": {
+        "support_role_ids": [
+          1274716660036800614
+        ]
+      },
+      "panel": {
+        "title": "# `🎫` Support Tickets",
+        "description": "",
+        "placeholder": "Kategorie auswählen...",
+        "clear_channel_on_start": true
+      },
+      "ticket_creator": {
+        "image_url": "https://github.com/Benspiel/Flux-Bot/blob/161892db95c76571b02e58d7925306c7814dd21c/bilder/support/support.png"
+      },
+      "ticket_banner": {
+        "image_url": "https://github.com/Benspiel/Flux-Bot/blob/161892db95c76571b02e58d7925306c7814dd21c/bilder/support/support_button.png"
+      },
+      "ticket_embed": {
+        "title": "Support Ticket",
+        "description": "Hallo {user_mention}! Ein Teammitglied hilft dir gleich weiter.",
+        "footer": "Ticket ID: {ticket_id}"
+      },
+      "ticket_options": [
         {
-          "name": "`📣` Hinweis",
-          "value": "> Nach der Verifizierung erhältst du automatisch deine Rolle.\n> Falls etwas nicht funktioniert, wende dich bitte an das Serverteam.",
-          "inline": false
+          "label": "Bewerbung",
+          "description": "Bewirb dich für ein Team oder einen Rang",
+          "emoji": "📋",
+          "question": ""
+        },
+        {
+          "label": "Fehler",
+          "description": "Melde einen Fehler oder ein Problem",
+          "emoji": "🐛",
+          "question": "Was ist das Problem?"
+        },
+        {
+          "label": "Allgemein",
+          "description": "Allgemeine Support-Anfrage",
+          "emoji": "💬",
+          "question": ""
         }
       ],
-      "image_url": "https://github.com/Benspiel/Flux-Bot/blob/41fe79a6231428bd6ebd3a414f6a9d9a19ea14a7/bilder/verification.png",
-      "footer": ""
-    }
-  },
-  "counting": {
-    "enabled": true,
-    "channel_id": 1409831071771529236,
-    "ok_emoji": "✅",
-    "fail_emoji": "❌",
-    "wrong_number_message": "❌ {user_mention} hat die falsche Zahl geschrieben - es geht wieder bei **0** los!",
-    "twice_title": "❌ Du darfst nicht zweimal hintereinander zählen!",
-    "twice_description": "Bitte warte, bis jemand anderes dran ist."
-  },
-  "join_leave": {
-    "enabled": true,
-    "channel_id": 0,
-    "join": {
-      "enabled": true,
-      "channel_id": 0,
-      "embed": {
-        "title": "Willkommen!",
-        "description": "{user_mention} ist dem Server beigetreten.",
-        "color": "#2ecc71",
-        "footer": "Mitglieder: {member_count}"
+      "messages": {
+        "no_reason": "Nicht angegeben",
+        "guild_only": "Tickets können nur auf einem Server erstellt werden.",
+        "already_open": "Du hast bereits ein offenes Ticket: {channel_mention}",
+        "created": "Dein Ticket wurde erstellt: {channel_mention}",
+        "ticket_created_message": "{user_mention} hat ein neues Ticket erstellt.",
+        "missing_channel_permission": "Ich habe keine Berechtigung, Ticket-Channels zu erstellen.",
+        "not_a_ticket_channel": "Dieses Ticket kann hier nicht geschlossen werden.",
+        "close_denied": "Du darfst dieses Ticket nicht schließen.",
+        "close_question": "Möchtest du dieses Ticket wirklich schließen?",
+        "close_confirm_owner_only": "Nur die Person, die das Schließen gestartet hat, kann hier bestätigen.",
+        "close_cancelled": "Schließen abgebrochen.",
+        "closing": "Ticket wird geschlossen..."
       }
     },
-    "leave": {
+    "announcements": {
       "enabled": true,
-      "channel_id": 0,
+      "channel_id": 1511050289031938189,
+      "auto_convert_messages": true,
+      "image_url": "https://github.com/Benspiel/Flux-Bot/blob/161892db95c76571b02e58d7925306c7814dd21c/bilder/fertige_announce.png"
+    },
+    "verification": {
+      "enabled": true,
+      "channel_id": 1428752967439487059,
+      "role_id": 1510988283654701136,
+      "emoji": "✅",
+      "clear_channel_on_start": true,
       "embed": {
-        "title": "Auf Wiedersehen!",
-        "description": "{user_name} hat den Server verlassen.",
-        "color": "#e74c3c",
-        "footer": "Mitglieder: {member_count}"
+        "title": "# `✅` Server-Verifizierung",
+        "description": "`📌` Willkommen auf dem Discord-Server.\n> Bitte lies die Serverregeln aufmerksam durch.\n> Klicke unten auf den Button, um dich zu verifizieren.\n> Mit der Verifizierung bestätigst du, dass du die Regeln gelesen hast und akzeptierst.",
+        "thumbnail_url": "",
+        "image_url": "https://github.com/Benspiel/Flux-Bot/blob/161892db95c76571b02e58d7925306c7814dd21c/bilder/verification.png",
+        "footer": "",
+        "fields": [
+          {
+            "name": "`📣` Hinweis",
+            "value": "> Nach der Verifizierung erhältst du automatisch deine Rolle.\n> Falls etwas nicht funktioniert, wende dich bitte an das Serverteam.",
+            "inline": false
+          }
+        ]
       }
-    }
-  },
-  "social_notifications": {
-    "enabled": true,
-    "poll_interval_seconds": 300,
-    "youtube": {
+    },
+    "counting": {
       "enabled": true,
-      "announce_existing_on_start": false,
-      "channel_id": 0,
-      "channels": [
-        {
-          "name": "YouTube Kanal",
-          "url": "https://www.youtube.com/@KANAL",
-          "channel_id": "",
-          "discord_channel_id": 0,
-          "mention": ""
+      "channel_id": 1409831071771529236,
+      "ok_emoji": "✅",
+      "fail_emoji": "❌",
+      "wrong_number_message": "❌ {user_mention} hat die falsche Zahl geschrieben - es geht wieder bei **0** los!",
+      "twice_title": "❌ Du darfst nicht zweimal hintereinander zählen!",
+      "twice_description": "Bitte warte, bis jemand anderes dran ist."
+    },
+    "join_leave": {
+      "enabled": true,
+      "join": {
+        "enabled": true,
+        "channel_id": 0,
+        "embed": {
+          "title": "Willkommen!",
+          "description": "{user_mention} ist dem Server beigetreten.",
+          "footer": "Mitglieder: {member_count}"
         }
-      ]
-    },
-    "twitch": {
-      "enabled": true,
-      "announce_existing_on_start": false,
-      "channel_id": 0,
-      "channels": [
-        {
-          "name": "Twitch Kanal",
-          "url": "https://www.twitch.tv/USERNAME",
-          "login": "USERNAME",
-          "discord_channel_id": 0,
-          "mention": ""
+      },
+      "leave": {
+        "enabled": true,
+        "channel_id": 0,
+        "embed": {
+          "title": "Auf Wiedersehen!",
+          "description": "{user_name} hat den Server verlassen.",
+          "footer": "Mitglieder: {member_count}"
         }
-      ]
-    }
-  },
-  "security": {
-    "enabled": true,
-    "log_channel_id": 0,
-    "log_color": "#f1c40f",
-    "bypass_admins": true,
-    "ignored_channel_ids": [],
-    "ignored_role_ids": [],
-    "ignored_user_ids": [],
-    "advanced_anti_spam": {
-      "enabled": true,
-      "window_seconds": 8,
-      "max_messages": 5,
-      "max_duplicate_messages": 3,
-      "delete_message": true,
-      "timeout_seconds": 60,
-      "warn_message": "{user_mention}, bitte spamme nicht."
+      }
     },
-    "advanced_anti_raid": {
+    "social_notifications": {
       "enabled": true,
-      "join_window_seconds": 60,
-      "join_threshold": 8,
-      "raid_mode_seconds": 300,
-      "new_account_age_seconds": 86400,
-      "only_punish_new_accounts": true,
-      "raid_action": "timeout",
-      "timeout_seconds": 600
+      "poll_interval_seconds": 300,
+      "platforms": {
+        "youtube": {
+          "enabled": true,
+          "announce_existing_on_start": false,
+          "channel_id": 0,
+          "channels": [
+            {
+              "name": "YouTube Kanal",
+              "url": "https://www.youtube.com/@KANAL",
+              "channel_id": "",
+              "discord_channel_id": 0,
+              "mention": ""
+            }
+          ]
+        },
+        "twitch": {
+          "enabled": true,
+          "announce_existing_on_start": false,
+          "channel_id": 0,
+          "channels": [
+            {
+              "name": "Twitch Kanal",
+              "url": "https://www.twitch.tv/USERNAME",
+              "login": "USERNAME",
+              "discord_channel_id": 0,
+              "mention": ""
+            }
+          ]
+        }
+      }
     },
-    "anti_nsfw_links": {
+    "security": {
       "enabled": true,
-      "domains": [
-        "pornhub.com",
-        "xvideos.com",
-        "xnxx.com",
-        "redtube.com",
-        "youporn.com",
-        "onlyfans.com"
-      ],
-      "delete_message": true,
-      "timeout_seconds": 300,
-      "warn_message": "{user_mention}, NSFW-Links sind hier nicht erlaubt."
-    },
-    "anti_malicious_links": {
-      "enabled": true,
-      "domains": [
-        "grabify.link",
-        "iplogger.org",
-        "2no.co",
-        "blasze.com",
-        "ps3cfw.com",
-        "yip.su"
-      ],
-      "block_discord_invites": true,
-      "block_zero_width_obfuscation": true,
-      "delete_message": true,
-      "timeout_seconds": 600,
-      "warn_message": "{user_mention}, dieser Link ist nicht erlaubt."
-    },
-    "words_blacklist": {
-      "enabled": true,
-      "words": [],
-      "delete_message": true,
-      "timeout_seconds": 120,
-      "warn_message": "{user_mention}, dieses Wort ist nicht erlaubt."
-    },
-    "links_blacklist": {
-      "enabled": true,
-      "domains": [],
-      "delete_message": true,
-      "timeout_seconds": 120,
-      "warn_message": "{user_mention}, dieser Link ist blockiert."
-    },
-    "anti_emoji_spam": {
-      "enabled": true,
-      "max_emojis": 12,
-      "max_emoji_ratio": 0.65,
-      "delete_message": true,
-      "timeout_seconds": 60,
-      "warn_message": "{user_mention}, bitte kein Emoji-Spam."
-    },
-    "anti_walls_of_text": {
-      "enabled": true,
-      "max_characters": 1600,
-      "max_lines": 18,
-      "max_repeated_character": 18,
-      "max_characters_without_space": 250,
-      "delete_message": true,
-      "timeout_seconds": 60,
-      "warn_message": "{user_mention}, bitte keine Textwände."
+      "log_channel_id": 0,
+      "bypass_admins": true,
+      "ignored_channel_ids": [],
+      "ignored_role_ids": [],
+      "ignored_user_ids": [],
+      "rules": {
+        "advanced_anti_spam": {
+          "enabled": true,
+          "window_seconds": 8,
+          "max_messages": 5,
+          "max_duplicate_messages": 3,
+          "delete_message": true,
+          "timeout_seconds": 60,
+          "warn_message": "{user_mention}, bitte spamme nicht."
+        },
+        "advanced_anti_raid": {
+          "enabled": true,
+          "join_window_seconds": 60,
+          "join_threshold": 8,
+          "raid_mode_seconds": 300,
+          "new_account_age_seconds": 86400,
+          "only_punish_new_accounts": true,
+          "raid_action": "timeout",
+          "timeout_seconds": 600
+        },
+        "anti_nsfw_links": {
+          "enabled": true,
+          "domains": [
+            "pornhub.com",
+            "xvideos.com",
+            "xnxx.com",
+            "redtube.com",
+            "youporn.com",
+            "onlyfans.com"
+          ],
+          "delete_message": true,
+          "timeout_seconds": 300,
+          "warn_message": "{user_mention}, NSFW-Links sind hier nicht erlaubt."
+        },
+        "anti_malicious_links": {
+          "enabled": true,
+          "domains": [
+            "grabify.link",
+            "iplogger.org",
+            "2no.co",
+            "blasze.com",
+            "ps3cfw.com",
+            "yip.su"
+          ],
+          "block_discord_invites": true,
+          "block_zero_width_obfuscation": true,
+          "delete_message": true,
+          "timeout_seconds": 600,
+          "warn_message": "{user_mention}, dieser Link ist nicht erlaubt."
+        },
+        "words_blacklist": {
+          "enabled": true,
+          "words": [],
+          "delete_message": true,
+          "timeout_seconds": 120,
+          "warn_message": "{user_mention}, dieses Wort ist nicht erlaubt."
+        },
+        "links_blacklist": {
+          "enabled": true,
+          "domains": [],
+          "delete_message": true,
+          "timeout_seconds": 120,
+          "warn_message": "{user_mention}, dieser Link ist blockiert."
+        },
+        "anti_emoji_spam": {
+          "enabled": true,
+          "max_emojis": 12,
+          "max_emoji_ratio": 0.65,
+          "delete_message": true,
+          "timeout_seconds": 60,
+          "warn_message": "{user_mention}, bitte kein Emoji-Spam."
+        },
+        "anti_walls_of_text": {
+          "enabled": true,
+          "max_characters": 1600,
+          "max_lines": 18,
+          "max_repeated_character": 18,
+          "max_characters_without_space": 250,
+          "delete_message": true,
+          "timeout_seconds": 60,
+          "warn_message": "{user_mention}, bitte keine Textwände."
+        }
+      }
     }
   }
 }

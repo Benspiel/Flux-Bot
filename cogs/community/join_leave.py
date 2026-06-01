@@ -17,7 +17,7 @@ def load_config() -> dict[str, Any]:
 
 def join_leave_config() -> dict[str, Any]:
     config = load_config()
-    return config.get("join_leave", {})
+    return config.get("features", {}).get("join_leave", config.get("join_leave", {}))
 
 
 def get_color(value: str | None, fallback: discord.Color) -> discord.Color:

@@ -32,18 +32,18 @@
     "emoji": "✅",
     "clear_channel_on_start": true,
     "embed": {
-      "title": "# `🚨` Das HugoSMP Regelwerk",
-      "description": "`🚨` Dies ist die **offizielle Verification** des Servers.\n> Es gilt für **alle Mitglieder** auf dem gesamten Discord-Server.\n> Reagiere unten mit **✅**, um dich zu verifizieren und alle Bereiche freizuschalten.\n> Mit der Verifizierung bestätigst du, dass du die Regeln gelesen hast und akzeptierst.",
+      "title": "# `✅` Server-Verifizierung",
+      "description": "`📌` Willkommen auf dem Discord-Server.\n> Bitte lies die Serverregeln aufmerksam durch.\n> Klicke unten auf den Button, um dich zu verifizieren und Zugriff auf die freigeschalteten Bereiche zu erhalten.\n> Mit der Verifizierung bestätigst du, dass du die Regeln gelesen hast und akzeptierst.",
       "color": "#2b2d31",
-      "thumbnail_url": "https://raw.githubusercontent.com/Benspiel/Flux-Bot/d67fcb7bfada60446f7456440c7c42f59dfc8cb8/bilder/Logo.png",
+      "thumbnail_url": "",
       "fields": [
         {
-          "name": "📣 Hinweis des Teams",
-          "value": "> Nach der Verification erhältst du automatisch deine Rolle.\n> Bitte entferne deine Reaktion nicht, damit die Verifizierung eindeutig bleibt.\n> Bei Problemen kannst du dich jederzeit beim Team melden.",
+          "name": "`📣` Hinweis",
+          "value": "> Nach der Verifizierung erhältst du automatisch deine Rolle.\n> Falls etwas nicht funktioniert, wende dich bitte an das Serverteam.",
           "inline": false
         }
       ],
-      "image_url": "https://github.com/Benspiel/Flux-Bot/blob/7c496be4b5d733dd610a859650a03e648bcb2c09/bilder/verification_banner.png",
+      "image_url": "https://github.com/Benspiel/Flux-Bot/blob/41fe79a6231428bd6ebd3a414f6a9d9a19ea14a7/bilder/verification.png",
       "footer": ""
     }
   },

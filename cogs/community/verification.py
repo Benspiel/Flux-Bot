@@ -41,48 +41,127 @@ def normalize_image_url(image_url: str) -> str:
     )
 
 
-def create_verification_embed(config: dict[str, Any]) -> discord.Embed:
-    embed_config = config.get("embed", {})
-    embed = discord.Embed(
-        title=embed_config.get("title", "Verifizierung"),
-        description=embed_config.get(
-            "description",
-            "Reagiere mit dem Emoji unten, um dich zu verifizieren.",
-        ),
-        color=get_color(embed_config.get("color"), discord.Color.green()),
-    )
+VERIFY_BUTTON_CUSTOM_ID = "flux_bot:verification:verify"
 
-    thumbnail_url = str(embed_config.get("thumbnail_url", "")).strip()
-    if thumbnail_url:
-        embed.set_thumbnail(url=normalize_image_url(thumbnail_url))
 
-    for field in embed_config.get("fields", []):
-        name = str(field.get("name", "")).strip()
-        value = str(field.get("value", "")).strip()
-        if not name or not value:
-            continue
+class VerificationButton(discord.ui.Button):
+    def __init__(self, role_id: int, emoji: str) -> None:
+        super().__init__(
+            label="Verifizieren",
+            style=discord.ButtonStyle.success,
+            custom_id=VERIFY_BUTTON_CUSTOM_ID,
+            emoji=emoji or None,
+        )
+        self.role_id = role_id
 
-        embed.add_field(name=name, value=value, inline=bool(field.get("inline", False)))
+    async def callback(self, interaction: discord.Interaction) -> None:
+        if interaction.guild is None:
+            await interaction.response.send_message(
+                "Die Verifizierung ist nur auf einem Server möglich.",
+                ephemeral=True,
+            )
+            return
 
-    image_url = str(embed_config.get("image_url", "")).strip()
-    if image_url:
-        embed.set_image(url=normalize_image_url(image_url))
+        role = interaction.guild.get_role(self.role_id)
+        if role is None:
+            await interaction.response.send_message(
+                "Die Verification-Rolle wurde nicht gefunden. Bitte kontaktiere das Serverteam.",
+                ephemeral=True,
+            )
+            return
 
-    thumbnail_url = str(embed_config.get("thumbnail_url", "")).strip()
-    if thumbnail_url:
-        embed.set_thumbnail(url=normalize_image_url(thumbnail_url))
+        member = interaction.user
+        if not isinstance(member, discord.Member):
+            try:
+                member = await interaction.guild.fetch_member(interaction.user.id)
+            except discord.DiscordException:
+                await interaction.response.send_message(
+                    "Dein Mitgliedsprofil konnte nicht geladen werden. Bitte versuche es erneut.",
+                    ephemeral=True,
+                )
+                return
 
-    for field in embed_config.get("fields", []):
-        name = str(field.get("name", "")).strip()
-        value = str(field.get("value", "")).strip()
-        if name and value:
-            embed.add_field(name=name, value=value, inline=bool(field.get("inline", False)))
+        if role in member.roles:
+            await interaction.response.send_message(
+                "Du bist bereits verifiziert.",
+                ephemeral=True,
+            )
+            return
 
-    footer = str(embed_config.get("footer", "")).strip()
-    if footer:
-        embed.set_footer(text=footer)
+        try:
+            await member.add_roles(role, reason="Verification-Button")
+        except discord.Forbidden:
+            await interaction.response.send_message(
+                "Mir fehlen Rechte, um dir die Verification-Rolle zu geben.",
+                ephemeral=True,
+            )
+            return
+        except discord.DiscordException:
+            await interaction.response.send_message(
+                "Die Verification-Rolle konnte nicht vergeben werden. Bitte versuche es erneut.",
+                ephemeral=True,
+            )
+            return
 
-    return embed
+        await interaction.response.send_message(
+            "Du wurdest erfolgreich verifiziert.",
+            ephemeral=True,
+        )
+
+
+class VerificationView(discord.ui.LayoutView):
+    def __init__(self, config: dict[str, Any]) -> None:
+        super().__init__(timeout=None)
+        embed_config = config.get("embed", {})
+        role_id = int(config.get("role_id") or 0)
+        emoji = str(config.get("emoji", "✅")).strip()
+
+        components = []
+
+        title = str(embed_config.get("title", "# `✅` Server-Verifizierung")).strip()
+        description = str(
+            embed_config.get(
+                "description",
+                "`✅` Willkommen auf dem Discord-Server.\n> Reagiere unten, um dich zu verifizieren.",
+            ),
+        ).strip()
+        if title:
+            components.append(discord.ui.TextDisplay(title))
+
+        if title and description:
+            components.append(discord.ui.Separator())
+
+        if description:
+            components.append(discord.ui.TextDisplay(description))
+
+        for field in embed_config.get("fields", []):
+            name = str(field.get("name", "")).strip()
+            value = str(field.get("value", "")).strip()
+            if name and value:
+                components.append(discord.ui.TextDisplay(f"**{name}**\n{value}"))
+
+        image_url = str(embed_config.get("image_url", "")).strip()
+        if image_url:
+            components.append(discord.ui.Separator())
+            components.append(
+                discord.ui.MediaGallery(
+                    discord.MediaGalleryItem(normalize_image_url(image_url)),
+                ),
+            )
+
+        components.append(discord.ui.Separator())
+        components.append(discord.ui.ActionRow(VerificationButton(role_id, emoji)))
+
+        self.add_item(
+            discord.ui.Container(
+                *components,
+                accent_colour=get_color(embed_config.get("color"), discord.Color.green()),
+            ),
+        )
+
+
+def create_verification_view(config: dict[str, Any]) -> VerificationView:
+    return VerificationView(config)
 
 
 class Verification(commands.Cog):
@@ -102,7 +181,6 @@ class Verification(commands.Cog):
 
         channel_id = int(config.get("channel_id") or 0)
         role_id = int(config.get("role_id") or 0)
-        emoji = str(config.get("emoji", "✅")).strip()
 
         if not channel_id or not role_id:
             print("Verification nicht eingerichtet. Prüfe verification.channel_id und role_id.")
@@ -124,75 +202,14 @@ class Verification(commands.Cog):
             if config.get("clear_channel_on_start", True):
                 await channel.purge(limit=None, reason="Verification-Panel beim Start zurückgesetzt")
 
-            message = await channel.send(embed=create_verification_embed(config))
-            await message.add_reaction(emoji)
+            message = await channel.send(view=create_verification_view(config))
             self.message_id = message.id
             self.panel_sent = True
             print(f"Verification-Panel in #{channel.name} gesendet.")
         except discord.Forbidden:
-            print("Mir fehlen Rechte zum Senden/Reagieren/Leeren im Verification-Channel.")
+            print("Mir fehlen Rechte zum Senden/Leeren im Verification-Channel.")
         except discord.DiscordException as error:
             print(f"Verification-Panel konnte nicht gesendet werden: {error}")
-
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None:
-        if self.bot.user is not None and payload.user_id == self.bot.user.id:
-            return
-
-        config = verification_config()
-        if not config.get("enabled", True):
-            return
-
-        channel_id = int(config.get("channel_id") or 0)
-        role_id = int(config.get("role_id") or 0)
-        allowed_emoji = str(config.get("emoji", "✅")).strip()
-
-        if payload.channel_id != channel_id:
-            return
-
-        if self.message_id is not None and payload.message_id != self.message_id:
-            return
-
-        guild = self.bot.get_guild(payload.guild_id) if payload.guild_id else None
-        if guild is None:
-            return
-
-        channel = guild.get_channel(payload.channel_id)
-        if not isinstance(channel, discord.TextChannel):
-            return
-
-        message = None
-        try:
-            message = await channel.fetch_message(payload.message_id)
-        except discord.DiscordException:
-            pass
-
-        if str(payload.emoji) != allowed_emoji:
-            if message is not None:
-                try:
-                    await message.remove_reaction(payload.emoji, discord.Object(id=payload.user_id))
-                except discord.DiscordException:
-                    pass
-            return
-
-        role = guild.get_role(role_id)
-        if role is None:
-            print("Verification-Rolle nicht gefunden. Prüfe verification.role_id.")
-            return
-
-        member = payload.member
-        if member is None:
-            try:
-                member = await guild.fetch_member(payload.user_id)
-            except discord.DiscordException:
-                return
-
-        try:
-            await member.add_roles(role, reason="Verification-Reaktion")
-        except discord.Forbidden:
-            print("Mir fehlen Rechte, um die Verification-Rolle zu vergeben.")
-        except discord.DiscordException as error:
-            print(f"Verification-Rolle konnte nicht vergeben werden: {error}")
 
 
 async def setup(bot: commands.Bot) -> None:
